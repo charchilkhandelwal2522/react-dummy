@@ -1,24 +1,88 @@
-import logo from './logo.svg';
 import './App.css';
+import Header from './MyComponents/Header';
+import {ToDos} from './MyComponents/ToDos';
+import {Footer} from './MyComponents/Footer';
+import { AddToDo } from './MyComponents/AddToDo';
+import {useEffect, useState} from 'react';
+import { About } from './MyComponents/About';
+import { 
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from 'react-router-dom';
 
 function App() {
+
+  let initTodo;
+  if(localStorage.getItem("todos") === null){
+    initTodo = [];
+  }else{
+    initTodo = JSON.parse(localStorage.getItem("todos"))
+  }
+
+  const deleteTodo = (todo) => {
+    console.log("Deleting this todo", todo);
+    setTodos(todos.filter((e) => e !== todo));
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }
+
+  const editTodo = (todo) => {
+    console.log("Editing this todo", todo);
+    setTodos(todos.map((e) => {
+      if(e.sno === todo.sno && todo.title !== "" && todo.desc !== "") {
+        return {
+          ...e,
+          title: todo.title,
+          desc: todo.desc
+        };
+      }
+      return e;
+    }));
+  }
+    
+  const addToDo = (title, desc) => {
+    console.log('I am adding this todo', title, desc);
+    let sno;
+    if(todos.length == 0){
+      sno = 1;
+    }else{
+      sno = todos[todos.length-1].sno + 1;
+    }
+    
+    const myTodo = {
+      sno: sno,
+      title: title,
+      desc: desc,
+    }
+    setTodos([...todos,  myTodo]);
+    console.log(myTodo);
+    
+  }
+  
+  const [todos, setTodos] = useState(initTodo);
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+    <Router>
+      <Header title="My Todos List" searchBar={true}/>
+      
+      <Routes>
+        <Route path="/" element={
+          <>
+            <AddToDo addToDo={addToDo}/>
+            <ToDos todos={todos} onDelete={deleteTodo} onEdit={editTodo} />
+          </>
+        } />
+        <Route path="/about" element={<About />} />
+      </Routes>
+      
+      <Footer />
+    </Router>
+    </>
   );
 }
 
