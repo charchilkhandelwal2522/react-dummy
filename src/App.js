@@ -60,15 +60,26 @@ function App() {
   }
   
   const [todos, setTodos] = useState(initTodo);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
 
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos])
 
+  useEffect(() => {
+    document.documentElement.setAttribute("data-bs-theme", darkMode ? "dark" : "light");
+    localStorage.setItem("theme", darkMode ? "dark" : "light");
+  }, [darkMode])
+
   return (
     <>
     <Router>
-      <Header title="My Todos List" searchBar={true}/>
+      <Header
+        title="My Todos List"
+        searchBar={true}
+        darkMode={darkMode}
+        toggleDarkMode={() => setDarkMode((prev) => !prev)}
+      />
       
       <Routes>
         <Route path="/" element={

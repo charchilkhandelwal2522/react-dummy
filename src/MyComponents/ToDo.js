@@ -2,7 +2,7 @@ import React from 'react'
 
 export const ToDo = ({todo, onDelete, onEdit}) => {
   return (
-    <div className="border border-dark my-3 p-3 rounded bg-light">
+    <div className="border my-3 p-3 rounded bg-body-secondary">
       <h3>S.No. {todo.sno}</h3>
       <h4>{todo.title}</h4>
       <p>{todo.desc}</p>
