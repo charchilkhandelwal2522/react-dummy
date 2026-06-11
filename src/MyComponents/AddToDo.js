@@ -8,9 +8,10 @@ export const AddToDo = (props) => {
     const submit = (e) => {
         e.preventDefault();
         if(!title || !desc) {
-            alert("Title and Description cannot be blank.");
+            props.showAlert("danger", "Title and Description cannot be blank.");
         }else {
             props.addToDo(title, desc);
+            props.showAlert("success", "Todo added successfully!");
             setTitle("");
             setDesc("");
         }

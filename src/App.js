@@ -3,8 +3,9 @@ import Header from './MyComponents/Header';
 import {ToDos} from './MyComponents/ToDos';
 import {Footer} from './MyComponents/Footer';
 import { AddToDo } from './MyComponents/AddToDo';
-import {useEffect, useState} from 'react';
 import { About } from './MyComponents/About';
+import { Alert } from './MyComponents/Alert';
+import {useEffect, useState} from 'react';
 import { 
   BrowserRouter as Router,
   Routes,
@@ -23,7 +24,7 @@ function App() {
   const deleteTodo = (todo) => {
     console.log("Deleting this todo", todo);
     setTodos(todos.filter((e) => e !== todo));
-    localStorage.setItem("todos", JSON.stringify(todos));
+    showAlert("danger", `"${todo.title}" deleted successfully!`);
   }
 
   const editTodo = (todo) => {
@@ -61,6 +62,13 @@ function App() {
   
   const [todos, setTodos] = useState(initTodo);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
+  const [alert, setAlert] = useState(null);
+  const showAlert = (type, message) => {
+    setAlert({
+      type: type,
+      msg: message
+    })
+  }
 
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
@@ -78,13 +86,17 @@ function App() {
         title="My Todos List"
         searchBar={true}
         darkMode={darkMode}
-        toggleDarkMode={() => setDarkMode((prev) => !prev)}
+        toggleDarkMode={() => setDarkMode((prev) => {
+          const next = !prev;
+          showAlert("success", next ? "Dark mode enabled" : "Light mode enabled");
+          return next;
+        })}
       />
-      
+      <Alert alert={alert} onClose={() => setAlert(null)} />
       <Routes>
         <Route path="/" element={
           <>
-            <AddToDo addToDo={addToDo}/>
+            <AddToDo addToDo={addToDo} showAlert={showAlert} />
             <ToDos todos={todos} onDelete={deleteTodo} onEdit={editTodo} />
           </>
         } />
